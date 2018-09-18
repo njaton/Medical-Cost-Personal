@@ -55,3 +55,12 @@ plot2 <-ggplot(CostCompare, aes(x=children, y=Norm, label=Norm)) +
 plot2 + theme(plot.title = element_text(hjust = .5),
               axis.text.x = element_text(angle=35, vjust=0.6))
 #--------------------------------------------------
+#plot to show how child amount and age effect charges value.
+plot1 <- ggplot(insurance, aes(x=age, y=charges)) +
+  geom_point(aes(col=children)) + ggtitle("Charges by Age & Number of Children") + 
+  ylab("Charges Applied") + xlab("Age") + theme_bw() + 
+  geom_smooth(method="loess", se=F) 
+plot1 + theme(plot.title = element_text(hjust = .5))
+
+#--------------------------------------------------
+

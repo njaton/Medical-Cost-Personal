@@ -55,12 +55,43 @@ plot2 <-ggplot(CostCompare, aes(x=children, y=Norm, label=Norm)) +
 plot2 + theme(plot.title = element_text(hjust = .5),
               axis.text.x = element_text(angle=35, vjust=0.6))
 #--------------------------------------------------
+#Seperate data to be used with linear regression
+insuranceChildren1 <- insuranceFrame[grepl(1, insuranceFrame$children),]
+insuranceChildren2 <- insuranceFrame[grepl(2, insuranceFrame$children),]
+insuranceChildren3 <- insuranceFrame[grepl(3, insuranceFrame$children),]
+insuranceChildren4 <- insuranceFrame[grepl(4, insuranceFrame$children),]
+insuranceChildren5 <- insuranceFrame[grepl(5, insuranceFrame$children),]
+
+#Perform a linear regression on each set 
+lm(insuranceNoChildren$charges ~ insuranceNoChildren$age)
+lm(insuranceChildren1$charges ~ insuranceChildren1$age)
+lm(insuranceChildren2$charges ~ insuranceChildren2$age)
+lm(insuranceChildren3$charges ~ insuranceChildren3$age)
+lm(insuranceChildren4$charges ~ insuranceChildren4$age)
+lm(insuranceChildren5$charges ~ insuranceChildren5$age)
+#--------------------------------------------------
 #plot to show how child amount and age effect charges value.
-plot1 <- ggplot(insurance, aes(x=age, y=charges)) +
+#Regression colors are a little strange ATM. The graph should be updated by 9/22/2018
+# 0 = Red
+# 1 = Blue
+# 2 = Green 
+# 3 = Grey
+# 4 = Orange
+# 5 = Purple
+plot3 <- ggplot(insurance, aes(x=age, y=charges)) +
   geom_point(aes(col=children)) + ggtitle("Charges by Age & Number of Children") + 
   ylab("Charges Applied") + xlab("Age") + theme_bw() + 
-  geom_smooth(method="loess", se=F) 
-plot1 + theme(plot.title = element_text(hjust = .5))
-
-#--------------------------------------------------
-
+  geom_abline(slope = 237.9, intercept = 3219.0, color = "red", 
+                                                  show.legend = TRUE) +
+  geom_abline(slope = 303.1, intercept = 771.3, color = "blue", 
+              show.legend = TRUE) + 
+  geom_abline(slope = 241.5, intercept = 5546.3, color = "green", 
+              show.legend = TRUE) +
+  geom_abline(slope = 287.4, intercept = 3407.3, color = "grey", 
+              show.legend = TRUE) + 
+  geom_abline(slope = 143.4, intercept = 8258.4, color = "orange", 
+              show.legend = TRUE) +
+  geom_abline(slope = 272.5, intercept = -919.0, color = "purple", 
+              show.legend = TRUE)
+plot3 + theme(plot.title = element_text(hjust = .5))
+#---------------------------------------------------

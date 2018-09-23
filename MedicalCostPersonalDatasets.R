@@ -105,23 +105,29 @@ plot3 <- ggplot(insurance, aes(x=age, y=charges)) +
 plot3 + theme(plot.title = element_text(hjust = .5))
 #---------------------------------------------------
 #Get into some testing 
-child0Sum <- summary(lm(insuranceNoChildren$charges ~ insuranceNoChildren$age))
-print(child0Sum) #p-value: 1.307e-15
+child0Sum <- summary(lm(insuranceNoChildren$charges ~ insuranceNoChildren$age, model = TRUE))
+print(child0Sum) #p-value: 1.307e-15 , Current R^2 =  0.1058
+#plot(lm(insuranceNoChildren$charges ~ insuranceNoChildren$age))
 
 child1Sum <- summary(lm(insuranceChildren1$charges ~ insuranceChildren1$age))
-print(child1Sum) #p-value: 1.288e-08
+print(child1Sum) #p-value: 1.288e-08, Current R^2 =  0.09572
+#plot(lm(insuranceChildren1$charges ~ insuranceChildren1$age))
 
 child2Sum <- summary(lm(insuranceChildren2$charges ~ insuranceChildren2$age))
-print(child2Sum) #p-value: 0.0007077
+print(child2Sum) #p-value: 0.0007077, Current R^2 =   0.04714
+#plot(lm(insuranceChildren2$charges ~ insuranceChildren2$age))
 
 child3Sum <- summary(lm(insuranceChildren3$charges ~ insuranceChildren3$age))
-print(child3Sum) #p-value: 0.0003042
+print(child3Sum) #p-value: 0.0003042, Current R^2 =  0.08096
+#plot(lm(insuranceChildren3$charges ~ insuranceChildren3$age))
 
 child4Sum <- summary(lm(insuranceChildren4$charges ~ insuranceChildren4$age))
-print(child4Sum) #p-value: 0.0003042
+print(child4Sum) #p-value: 0.0003042, Current R^2 =  0.03627
+#plot(lm(insuranceChildren4$charges ~ insuranceChildren4$age))
 
 child5Sum <- summary(lm(insuranceChildren5$charges ~ insuranceChildren5$age))
-print(child5Sum) #p-value .0006734
+print(child5Sum) #p-value .0006734, Current R^2 =  0.5248
+#plot(lm(insuranceChildren4$charges ~ insuranceChildren4$age))
 #-------------------------------------------------
 #Go Back and train on partial datasets 
 # No Children
@@ -194,4 +200,11 @@ LRChild5Predict <- predict(LRChild5, child5Test)
 accuracyCheck5 <- data.frame(cbind(actuals = child5Test$charges, pred = LRChild5Predict))
 child5Acc <- cor(accuracyCheck5)
 summary(accuracyCheck5) 
-#-------------------------------------------------
+#------------------------------------------------------
+
+# Although lm() was able to produce rather low p-values for the data 
+# R^2 remained incredibly low. It might be possible that linear regression 
+# may not have been the best model for this dataset. More reserach will be made 
+# in order to better determine the best fit model for the dataset. 
+
+#------------------------------------------------------

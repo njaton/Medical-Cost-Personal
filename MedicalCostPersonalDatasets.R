@@ -247,7 +247,7 @@ LRChild4 <- lm(charges ~ age + smoker + bmi, data = child4trainSet)
 LRChild4Predict <- predict(LRChild4, child4Test)
 accuracyCheck4 <- data.frame(cbind(actuals = child4Test$charges, pred = LRChild4Predict))
 child4Acc <- cor(accuracyCheck4)
-summary(accuracyCheck4) # Not the most accurate model.
+summary(accuracyCheck4) 
 
 #Five Children
 

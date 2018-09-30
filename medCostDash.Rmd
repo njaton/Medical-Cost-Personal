@@ -4,17 +4,14 @@ output:
   flexdashboard::flex_dashboard:
     orientation: row 
     vertical_layout: fill
-    self_contained: no
+    self_contained: yes
+    theme: yeti
 ---
 
 ```{r setup, include=FALSE}
 library(flexdashboard)
 library(plyr)
-library(knitr)
 library(ggplot2)
-library(plotly)
-library(flexdashboard)
-library(DAAG)
 ```
 
 ```{r}
@@ -61,7 +58,7 @@ CostCompare <- ddply(insuranceFrame,~children,summarise,CostAvg=mean((charges)))
 ### Averages
 ```{r}
 plot1 <- ggplot(CostCompare, aes(x=children, y=CostAvg)) +
-  geom_bar(position="dodge", stat="identity", fill = "red4") + ggtitle("Average Charges by Child Number") + 
+  geom_bar(position="dodge", stat="identity", fill = "steelblue2") + ggtitle("Average Charges by Child Number") + 
   ylab("Charges Applied") + xlab("# Children") + 
   geom_text(aes(label=round(CostAvg,1)), position = position_dodge(width=1), vjust=-.25) + theme_bw()
 plot1 + theme(plot.title = element_text(hjust = .5), legend.position = "none")
@@ -81,14 +78,61 @@ plot2 <-ggplot(CostCompare, aes(x=children, y=Norm, label=Norm)) +
   geom_bar(stat='identity', aes(fill=aboveBelow), width=.5)  +
   scale_fill_manual(name="Deviation of Charges", 
                     labels = c("Above Average", "Below Average"), 
-                    values = c("above"="cyan3", "below"="orangered1")) + 
+                    values = c("above"="tan2", "below"="steelblue")) + 
   ylab("Deviation From Mean") + xlab("Number of Children") +
   labs(title= "Average Charge Deviation by Child") + coord_flip() + theme_bw()
 plot2 + theme(plot.title = element_text(hjust = .5),
               axis.text.x = element_text(angle=35, vjust=0.6))
 ```
 
-Regression 
+Charges by Age / Children
+==================================================
+
+row
+--------------------------------------------------
+### Mean Charges (1 Child)
+```{r}
+insuranceChildren1 <- insuranceFrame[grepl(1, insuranceFrame$children),]
+insuranceChildren2 <- insuranceFrame[grepl(2, insuranceFrame$children),]
+insuranceChildren3 <- insuranceFrame[grepl(3, insuranceFrame$children),]
+insuranceChildren4 <- insuranceFrame[grepl(4, insuranceFrame$children),]
+insuranceChildren5 <- insuranceFrame[grepl(5, insuranceFrame$children),]
+
+valueBox(round(mean(insuranceChildren1$charges),2))
+```
+
+### Mean Charges (2 Children)
+```{r}
+valueBox(round(mean(insuranceChildren2$charges),2))
+```
+
+### Mean Charges (3 Children)
+```{r}
+valueBox(round(mean(insuranceChildren3$charges),2))
+```
+
+### Mean Charges (4 Children)
+```{r}
+valueBox(round(mean(insuranceChildren4$charges),2))
+```
+
+### Mean Charges (5 Children)
+```{r}
+valueBox(round(mean(insuranceChildren5$charges),2))
+```
+
+row
+--------------------------------------------------
+###
+```{r}
+plot3 <- ggplot(insurance, aes(x=age, y=charges)) +
+  geom_point(aes(col=children)) + ggtitle("Charges by Age & Number of Children") + 
+  ylab("Charges Applied") + xlab("Age") + theme_bw()
+plot3 + theme(plot.title = element_text(hjust = .5))
+```
+
+
+Regression Details 
 ==================================================
 ```{r}
 M2 <- lm(insurance$charges ~ insurance$age + insurance$children + insurance$bmi + 
@@ -97,23 +141,46 @@ M2 <- lm(insurance$charges ~ insurance$age + insurance$children + insurance$bmi 
 
 row
 --------------------------------------------------
-### BIC
-```{R}
-valueBox(BIC(M2))
+### R Squared
+```{r}
+valueBox(round((summary(M2)$r.squared),4))
 ```
 
-### AIC
-```{R}
-valueBox(AIC(M2))
+### Max-Min Accuracy 
+```{r}
+# Accuracy testing 
+m2Train  <- sample(1:nrow(insurance), 0.8*nrow(insurance))
+m2trainSet <- insurance[m2Train,]
+m2Test <- insurance[-m2Train,]                       
+
+LRm2 <- lm(charges ~ age + children + smoker + bmi, data = m2trainSet)
+LRM2Predict <- predict(LRm2, m2Test)
+accuracyM2 <- data.frame(cbind(actuals = m2trainSet$charges, pred = LRM2Predict))
+M2Acc <- cor(accuracyM2)
+
+M2min_max_accuracy <- mean(apply(accuracyM2, 1, min) / apply(accuracyM2, 1, max)) 
+valueBox(round(M2min_max_accuracy,4))
 ```
 
 row
 -------------------------------------------------
+### Coeffcient Details 
+![ALT text](/Users/nick/Desktop/R/Insurance Cost/pic1.png)
 
-### There should be an image under me 
-![ALT text](/Users/nick/Desktop/R/Insurance Cost/box.png)
-
+Regression Plots
+==================================================
 ### Regression plots
 ```{r}
 plot(M2)
 ```
+
+
+
+
+
+
+
+
+
+
+

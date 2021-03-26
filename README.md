@@ -1,5 +1,5 @@
 # Medical-Cost-Personal
 
-A look into how child amount altered charges.
+The following dashboard shows how children effect medical costs.
 
 Dashboard : http://rpubs.com/njaton/424622
